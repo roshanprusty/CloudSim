@@ -1,0 +1,126 @@
+Here are the 10 steps to achieve the code:
+
+1. Import the necessary packages:
+
+```
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.cloudbus.cloudsim.*;
+```
+
+2. Create a Java class named `CloudSimExample1` in the package `org.cloudbus.cloudsim.examples`.
+
+3. Define two private static variables for storing the list of cloudlets and virtual machines:
+
+```
+private static List<Cloudlet> cloudletList;
+private static List<Vm> vmlist;
+```
+
+4. Add the main method with the following signature:
+
+```
+public static void main(String[] args)
+```
+
+5. Inside the main method, print a message to indicate that the simulation has started:
+
+```
+Log.printLine("Starting CloudSimExample1...");
+```
+
+6. Initialize the CloudSim package by calling the `init` method with the number of cloud users, a calendar instance, and a flag to indicate whether to trace events:
+
+```
+int num_user = 1; // number of cloud users
+Calendar calendar = Calendar.getInstance();
+boolean trace_flag = false; // mean trace events
+
+// Initialize the CloudSim library
+CloudSim.init(num_user, calendar, trace_flag);
+```
+
+7. Create a datacenter by calling the `createDatacenter` method:
+
+```
+Datacenter datacenter0 = createDatacenter("Datacenter_0");
+```
+
+8. Create a broker by calling the `createBroker` method and get its ID:
+
+```
+DatacenterBroker broker = createBroker();
+int brokerId = broker.getId();
+```
+
+9. Create a virtual machine and add it to the list of virtual machines:
+
+```
+vmlist = new ArrayList<Vm>();
+
+// VM description
+int vmid = 0;
+int mips = 1000;
+long size = 10000; // image size (MB)
+int ram = 512; // vm memory (MB)
+long bw = 1000;
+int pesNumber = 1; // number of cpus
+String vmm = "Xen"; // VMM name
+
+// create VM
+Vm vm = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
+
+// add the VM to the vmList
+vmlist.add(vm);
+```
+
+10. Create a cloudlet and add it to the list of cloudlets, then submit the lists of virtual machines and cloudlets to the broker:
+
+```
+cloudletList = new ArrayList<Cloudlet>();
+
+// Cloudlet properties
+int id = 0;
+long length = 400000;
+long fileSize = 300;
+long outputSize = 300;
+UtilizationModel utilizationModel = new UtilizationModelFull();
+
+Cloudlet cloudlet = new Cloudlet(id, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
+cloudlet.setUserId(brokerId);
+cloudlet.setVmId(vmid);
+
+// add the cloudlet to the list
+cloudletList.add(cloudlet);
+
+// submit vm list to the broker
+broker.submitVmList(vmlist);
+
+// submit cloudlet list to the broker
+broker.submitCloudletList(cloudletList);
+```
+
+11. Start and stop the simulation:
+
+```
+CloudSim.startSimulation();
+CloudSim.stopSimulation();
+```
+
+12. Print the results of the simulation:
+
+```
+List<Cloudlet> newList = broker.getCloudletReceivedList();
+printCloudletList(newList);
+
+Log.printLine("CloudSimExample1 finished!");
+```
+
+13. Define the `createDatacenter` method to create a datacenter:
+
+```
+private static
