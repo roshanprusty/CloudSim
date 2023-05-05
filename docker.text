@@ -1,0 +1,9 @@
+docker -v
+docker images
+docker pull ubuntu
+docker images -q
+docker images -a
+docker run --name MyUbuntu1 -it ubuntu bash
+docker stop MyUbuntu1
+docker rmi -f ubuntu
+docker images
